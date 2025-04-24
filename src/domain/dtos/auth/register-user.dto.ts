@@ -1,6 +1,6 @@
 import { regularExps } from "../../../config";
 
-
+// (RegisterUserDto) sirve para validar los datos de registro de un usuario antes de crear una instancia con ellos. Si los datos son correctos, devuelve el DTO; si no, devuelve un mensaje de error.
 export class RegisterUserDto {
 
     private constructor(
