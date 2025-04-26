@@ -1,6 +1,6 @@
 import { BcryptAdapter } from "../../config";
 import { UserModel } from "../../data";
-import { CustomError, RegisterUserDto, UserEntity } from "../../domain";
+import { CustomError, LoginUserDto, RegisterUserDto, UserEntity } from "../../domain";
 
 // El controlador delega al servicio la creacion de un usuario
 
@@ -35,6 +35,37 @@ export class AuthService {
 
         } catch (error) {
             throw CustomError.internalServer(`${ error }`)
+        }
+    }
+
+    public async loginUser( loginUserDto: LoginUserDto ) {
+
+        const user = await UserModel.findOne( {email: loginUserDto.email} );
+        if ( !user ) throw CustomError.notFound('User doesnt exist');
+
+
+        try {
+            
+            const isValidPassword = BcryptAdapter.comparePassword( loginUserDto.password , user.password);
+
+            const { password, ...userEntity } = UserEntity.fromObject(user);
+
+
+            if ( !isValidPassword ) throw CustomError.badRequest('Invalid Password') 
+            
+            return {
+                user: { ...userEntity },
+                token: 'ABC',
+            }
+            
+        } catch (error) {
+
+            if ( error instanceof CustomError ) {
+
+                throw error
+            }
+
+            throw CustomError.internalServer(`${error}`)
         }
     }
 }

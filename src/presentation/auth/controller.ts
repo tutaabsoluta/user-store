@@ -3,7 +3,7 @@
 // El controlador no se deberia de encargar de creacion, validacion, etc, solamente es el controlador de la ruta, eso lo dene hacer un servicio.
 
 import { Request, Response } from "express";
-import { CustomError, RegisterUserDto } from "../../domain/";
+import { CustomError, LoginUserDto, RegisterUserDto } from "../../domain/";
 import { AuthService } from "../services/auth.service";
 
 export class AuthController {
@@ -36,7 +36,12 @@ export class AuthController {
     }
 
     loginUser = ( req: Request, res: Response ) => {
-        res.json('loginUser');
+        const [ error, loginDto ] = LoginUserDto.getUser(req.body)
+        if ( error ) return res.status(400).json({error})
+
+        this.authService.loginUser(loginDto!)
+            .then((user) => res.status(200).json( user ) )
+            .catch((error) => this.handleError( error, res ))
     }
 
     validateEmail = ( req: Request, res: Response ) => {
