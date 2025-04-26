@@ -1,3 +1,4 @@
+import { regularExps } from "../../../config";
 
 
 
@@ -15,6 +16,10 @@ export class LoginUserDto {
         if ( !email ) return ['Missing email', undefined];
 
         if ( !password ) return ['Missing password', undefined];
+
+        if ( !regularExps.email.test( email ) ) return ['Invalid email', undefined];
+
+        if ( password.length < 6 ) return ['Password too short', undefined];
 
         return [undefined, new LoginUserDto( email, password )];
     }
