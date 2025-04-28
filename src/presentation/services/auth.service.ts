@@ -1,4 +1,4 @@
-import { BcryptAdapter } from "../../config";
+import { BcryptAdapter, JwtAdapter } from "../../config";
 import { UserModel } from "../../data";
 import { CustomError, LoginUserDto, RegisterUserDto, UserEntity } from "../../domain";
 
@@ -43,29 +43,21 @@ export class AuthService {
         const user = await UserModel.findOne( {email: loginUserDto.email} );
         if ( !user ) throw CustomError.notFound('User doesnt exist');
 
-
-        try {
             
             const isValidPassword = BcryptAdapter.comparePassword( loginUserDto.password , user.password);
 
             const { password, ...userEntity } = UserEntity.fromObject(user);
 
 
-            if ( !isValidPassword ) throw CustomError.badRequest('Invalid Password') 
+            if ( !isValidPassword ) throw CustomError.badRequest('Invalid Password');
+
+            const token = await JwtAdapter.generateToken({ id: user.id });
+            if ( !token ) throw CustomError.internalServer('Error creating JWT')
             
             return {
-                user: { ...userEntity },
-                token: 'ABC',
+                user: userEntity,
+                token: token,
             }
             
-        } catch (error) {
-
-            if ( error instanceof CustomError ) {
-
-                throw error
-            }
-
-            throw CustomError.internalServer(`${error}`)
-        }
     }
 }
