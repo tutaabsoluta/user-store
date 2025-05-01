@@ -52,9 +52,6 @@ export class AuthController {
             .then(() => res.json('Email was validated succesfully!') )
             .catch((error) => this.handleError( error, res ))
 
-        
     }
-
-    
 }
 
