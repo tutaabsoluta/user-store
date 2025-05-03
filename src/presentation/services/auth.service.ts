@@ -4,7 +4,6 @@ import { CustomError, LoginUserDto, RegisterUserDto, UserEntity } from "../../do
 import { EmailService } from "./email.service";
 
 // El controlador delega al servicio la creacion de un usuario
-
 export class AuthService {
 
     // Podemos recibir una funcion o inyectar el servicio de email
@@ -12,6 +11,7 @@ export class AuthService {
         private emailService: EmailService,
     ) { }
 
+    // Register user
     public async registerUser(registerUserDto: RegisterUserDto) {
 
         const existUser = await UserModel.findOne({ email: registerUserDto.email });
@@ -22,19 +22,20 @@ export class AuthService {
 
             const user = new UserModel(registerUserDto);
 
-            // encriptar password
+            // Encriptar password
             user.password = BcryptAdapter.hashPassword(registerUserDto.password);
 
             // Guardar usuario con contrasena hasheada
             await user.save();
 
-            // JWT para mantener autenticacion de usuario
+            // JWT para autenticacion de usuario
             const token = await JwtAdapter.generateToken({ id: user.id });
             if (!token) throw CustomError.internalServer('Error creating JWT')
 
-            // email de confirmacion
+            // Enviar email de confirmacion
             await this.sendEmailValidationLink( user.email );
 
+            // Separamos el password
             const { password, ...userEntity } = UserEntity.fromObject(user);
 
             return {
@@ -47,6 +48,7 @@ export class AuthService {
         }
     }
 
+    // Login user
     public async loginUser(loginUserDto: LoginUserDto) {
 
         const user = await UserModel.findOne({ email: loginUserDto.email });
@@ -69,6 +71,7 @@ export class AuthService {
         }
     }
 
+    // Send email verification link
     private sendEmailValidationLink = async ( email: string ) => {
 
 
@@ -97,6 +100,7 @@ export class AuthService {
 
     }
 
+    // Validate email with token
     public validateEmail = async ( token: string ) => {
 
         const payload = await JwtAdapter.validateToken(token);
