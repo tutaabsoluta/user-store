@@ -19,7 +19,6 @@ export class AppRoutes {
     // Return the instance with the routes
     return router;
   }
-
-
+  
 }
 
