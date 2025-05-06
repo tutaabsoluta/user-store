@@ -5,8 +5,6 @@ import { envs } from '../../config';
 
 
 
-
-
 export class AuthRoutes {
 
 
@@ -31,11 +29,8 @@ export class AuthRoutes {
     router.post('/register', controller.registerUser);
     router.get('/validate-email/:token', controller.validateEmail);
 
-
-
     return router;
   }
-
 
 }
 
