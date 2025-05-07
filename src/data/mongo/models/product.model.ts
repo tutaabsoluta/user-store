@@ -34,5 +34,5 @@ const productSchema = new mongoose.Schema({
 });
 
 // Creamos el modelo basado en el schema
-export const ProductModel = mongoose.model('Category', productSchema);
+export const ProductModel = mongoose.model('Product', productSchema);
 
