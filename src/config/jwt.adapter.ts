@@ -14,12 +14,13 @@ export class JwtAdapter {
         return token;
     }
 
-    static validateToken(token: string) {
+    // Metodo que extrae el Payload del JWT o un error si no existe
+    static validateToken<T>(token: string): Promise<T | null> {
 
         return new Promise((resolve) => {
             jwt.verify(token, JWT_SEED, ( error, decoded ) => {
                 if ( error ) return resolve(null);
-                resolve( decoded );
+                resolve( decoded as T ); // Decodificamos lo que esta en el Token
             })
         });
     }
