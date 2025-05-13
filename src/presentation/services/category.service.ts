@@ -67,7 +67,7 @@ export class CatagoryService {
 
 
         } catch (error) {
-            throw CustomError.internalServer('Internal server error')
+            // // throw CustomError.internalServer('Internal server error')
         }
 
         //return [ categorias con id, name i available ]
